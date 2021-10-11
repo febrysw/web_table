@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kebutuhan dan Impian</title>
+</head>
+<body>
+    <h4>Masukkan Sumber Dana/Kebutuhan dan Impian Anda</h4>
+    Uraian <input type="text" id="uraian" value=""></input><br>
+    Jenis 
+    <select id="jenis">
+        <option value="masuk">Sumber Dana</option>
+        <option value="keluar">Impian</option>
+    </select><br>
+    Target Tahun <input type="text" id="tahun" value=""></input><br>
+    Target Bulan <input type="text" id="bulan" value=""></input><br>
+    Anggaran <input type="text" id="anggaran" value=""></input><br>
+    <input type="button" value="Simpan" onclick="simpan()">
+    <hr>
+
+    <div id="tampil"></div>
+
+    <script type="text/javascript">
+        var masuk = new Array();
+        var keluar = new Array();
+        var masuk_no = 0;
+        var keluar_no = 0;
+        
+        function simpan(){
+            var uraian = document.getElementById('uraian').value;
+            var jenis = document.getElementById('jenis').value;
+            var tahun = document.getElementById('tahun').value;
+            var bulan = document.getElementById('bulan').value;
+            var anggaran = parseFloat(document.getElementById('anggaran').value);
+
+            if(jenis=='masuk'){
+                masuk[masuk_no] = new Array();
+                masuk[masuk_no][0] = uraian;
+                masuk[masuk_no][1] = tahun;
+                masuk[masuk_no][2] = bulan;
+                masuk[masuk_no][3] = anggaran;
+                masuk[masuk_no][4] = 0;
+                masuk_no++;
+            }
+            else{
+                keluar[keluar_no] = new Array();
+                keluar[keluar_no][0] = uraian;
+                keluar[keluar_no][1] = tahun;
+                keluar[keluar_no][2] = bulan;
+                keluar[keluar_no][3] = 0;
+                keluar[keluar_no][4] = anggaran;
+                keluar_no++;
+            }
+
+            tampilkan();
+        }
+
+        function tampilkan(){
+            var masuk_jml = 0;
+            var keluar_jml = 0;
+            var kurang_jml = 0;
+            var datahtml = '';
+
+            datahtml += '<table border="1" cellspacing="0" cellpadding="5">';
+            datahtml += '<caption><h4>Daftar Kebutuhan dan Impian</h4></caption>';
+            datahtml += '<colgroup></colgroup>';
+            datahtml += '<colgroup></colgroup>';
+            datahtml += '<colgroup span="2"></colgroup>';
+            datahtml += '<colgroup span="2"></colgroup>';
+            datahtml += '<thead>';
+            datahtml += '<tr>';
+            datahtml += '<th rowspan="2" scope="column" align="center">No.</th>';
+            datahtml += '<th rowspan="2" scope="column" align="center">Sumber Dana / Kebutuhan</th>';
+            datahtml += '<th colspan="2" scope="colgroup" align="center">Target Waktu</th>';
+            datahtml += '<th colspan="2" scope="colgroup" align="center">Anggaran Dana (Rp)</th>';
+            datahtml += '</tr>';
+            datahtml += '<tr>';
+            datahtml += '<th scope="column" id="target-tahun" align="center">Tahun</th>';
+            datahtml += '<th scope="column" id="target-bulan" align="center">Bulan</th>';
+            datahtml += '<th scope="column" id="anggaran-masuk" align="center">Masuk</th>';
+            datahtml += '<th scope="column" id="anggaran-keluar" align="center">Keluar</th>';
+            datahtml += '</tr>';
+            datahtml += '</thead>';
+            datahtml += '<tbody>';
+            datahtml += '<tr>';
+            datahtml += '<th colspan="6" align="left">A. Sumber Dana</th>';
+
+            for(var i=0; i<masuk.length; i++){
+                var nomor = i+1;
+                datahtml += '<tr>';
+                datahtml += '<td align="center">'+nomor+'</td>';
+                datahtml += '<td>'+masuk[i][0]+'</td>';
+                datahtml += '<td headers="target-tahun" align="center">'+masuk[i][1]+'</td>';
+                datahtml += '<td headers="target-bulan" align="center">'+masuk[i][2]+'</td>';
+                datahtml += '<td headers="anggaran-masuk" align="right">'+Number(masuk[i][3]).toLocaleString()+'</td>';
+                datahtml += '<td headers="anggaran-keluar" align="right">'+masuk[i][4]+'</td>';
+                datahtml += '</tr>';
+
+                masuk_jml = masuk_jml+masuk[i][3];
+            }
+            
+            
+            datahtml += '</tr>';
+            datahtml += '<tr>';
+            datahtml += '<th colspan="6" align="left">B. Impian</th>';
+
+            for(var i=0; i<keluar.length; i++){
+                var nomor = i+1;
+                datahtml += '<tr>';
+                datahtml += '<td align="center">'+nomor+'</td>';
+                datahtml += '<td>'+keluar[i][0]+'</td>';
+                datahtml += '<td headers="target-tahun" align="center">'+keluar[i][1]+'</td>';
+                datahtml += '<td headers="target-bulan" align="center">'+keluar[i][2]+'</td>';
+                datahtml += '<td headers="anggaran-masuk" align="right">'+keluar[i][3]+'</td>';
+                datahtml += '<td headers="anggaran-keluar" align="right">'+Number(keluar[i][4]).toLocaleString()+'</td>';
+                datahtml += '</tr>';
+
+                keluar_jml = keluar_jml+keluar[i][4];
+            }
+
+            kurang_jml = keluar_jml-masuk_jml;
+            (kurang_jml<=0) ? kurang_jml=0 : kurang_jml=kurang_jml;
+
+            datahtml += '</tr>';
+            datahtml += '</tbody>';
+            datahtml += '<tfoot>';
+            datahtml += '<tr>';
+            datahtml += '<td colspan="4"><b>Total Anggaran</b></td>';
+            datahtml += '<td align="right">'+Number(masuk_jml).toLocaleString()+'</td>';
+            datahtml += '<td align="right">'+Number(keluar_jml).toLocaleString()+'</td>';
+            datahtml += '</tr>';
+            datahtml += '<tr>';
+            datahtml += '<td colspan="4"><b>Kekurangan Anggaran</b></td>';
+            datahtml += '<td colspan="2" align="right">'+Number(kurang_jml).toLocaleString()+'</td>';
+            datahtml += '</tr>';
+            datahtml += '</tfoot>';
+            datahtml += '</table>';
+            document.getElementById('tampil').innerHTML = datahtml;
+        }
+    </script>
+</body>
+</html>
